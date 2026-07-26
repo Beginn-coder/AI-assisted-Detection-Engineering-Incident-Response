@@ -1,5 +1,5 @@
 # 🛡️AI-assisted-Detection-Engineering-Incident-Response
-AI-assisted Detection Engineering &amp; Incident Response platform featuring Detection-as-Code, Sigma rules, GitHub Actions CI/CD, Splunk, Wazuh, Microsoft Sentinel, SOAR automation, Jira integration, and LLM-powered triage, investigation, reporting, and detection tuning.
+AI-assisted Detection Engineering & Incident Response platform that integrates Detection-as-Code, Sigma, SIEM, SOAR, GitHub Actions, Jira, and an LLM Security Copilot to automate detection, investigation, response, reporting, and continuous detection tuning.
 
 ## 📖 Overview
 This project demonstrates the design and implementation of an AI-assisted Detection Engineering and Incident Response platform that simulates a modern Security Operations Center (SOC). The platform combines Detection-as-Code principles with automated incident response, allowing security detections to be developed, tested, version-controlled, deployed, investigated, and continuously improved through a unified workflow.
@@ -143,3 +143,4 @@ To verify:
 2. In the search bar, type in index="mydfir-project" and set the time range to Last 24 hours
 
 You should be able to see events from your Windows 10 VM 
+
