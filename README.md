@@ -127,7 +127,7 @@ On your Windows VM, install Sysmon by navigating to https://learn.microsoft.com/
    - You will need to enter your splunk.com credentials (not your server credentials) to install.
 Finally, take a snapshot of the Splunk VM and name it Splunk-installed.
 
-### ⚡ Phase 2: Splunk Alerting & Webhook Ingestion
+## ⚡ Phase 2: Splunk Alerting & Webhook Ingestion
 ## Part 1: Send Windows Telemetry to Splunk
 1. On the Windows 10 VM, navigate to C:\Program Files\SplunkUniversalForwarder\etc\system\local
 2. Open notepad and create a new file
@@ -144,3 +144,32 @@ To verify:
 
 You should be able to see events from your Windows 10 VM 
 
+## Part 2: Building the Detection Engineering Repository
+🏗️ Step 1: Create Your GitHub Repository
+To treat detections as code, you need a centralized repository where your rules can live, undergo peer review, and eventually trigger automated testing and deployment.
+1. Create the Repository
+   - Login to Github
+   - Create a new private repository named something like: detection-engineering-lab
+   - Clone the repository to your local workstation through Github Desktop
+
+2. Establish Your Folder Structure
+
+
+   <img width="741" height="216" alt="image" src="https://github.com/user-attachments/assets/734d1862-a892-41d4-9bad-fc630ad1c5a4" />
+
+📝 Step 2: Stage Your First Sigma Rule
+
+Inside rules/windows/, create a new file: win_edr_tampering_stopped.yml and enter in the following Sigma rule:
+
+<img width="730" height="715" alt="image" src="https://github.com/user-attachments/assets/6211c23b-edb0-4c01-94cc-34be378a9f86" />
+
+
+🚀 Step 3: Commit Your First Detection Rule
+
+Open GitHub Desktop. It will automatically detect that you added a new file and display the green changes on the screen.
+
+In the bottom-left corner, type a summary title like: Add EDR tampering rule.
+
+Click the blue Commit to main button.
+
+Click Push origin at the top to upload the file to your live GitHub repository.
