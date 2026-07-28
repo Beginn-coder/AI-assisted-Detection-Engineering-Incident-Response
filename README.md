@@ -145,7 +145,8 @@ To verify:
 You should be able to see events from your Windows 10 VM 
 
 ## Part 2: Building the Detection Engineering Repository
-🏗️ Step 1: Create Your GitHub Repository
+### 🏗️ Step 1: Create Your GitHub Repository
+
 To treat detections as code, you need a centralized repository where your rules can live, undergo peer review, and eventually trigger automated testing and deployment.
 1. Create the Repository
    - Login to Github
@@ -157,19 +158,46 @@ To treat detections as code, you need a centralized repository where your rules 
 
    <img width="741" height="216" alt="image" src="https://github.com/user-attachments/assets/734d1862-a892-41d4-9bad-fc630ad1c5a4" />
 
-📝 Step 2: Stage Your First Sigma Rule
+### 📝 Step 2: Stage Your First Sigma Rule
 
 Inside rules/windows/, create a new file: win_edr_tampering_stopped.yml and enter in the following Sigma rule:
 
 <img width="730" height="715" alt="image" src="https://github.com/user-attachments/assets/6211c23b-edb0-4c01-94cc-34be378a9f86" />
 
 
-🚀 Step 3: Commit Your First Detection Rule
+### 🚀 Step 3: Commit Your First Detection Rule
 
-Open GitHub Desktop. It will automatically detect that you added a new file and display the green changes on the screen.
+- Open GitHub Desktop. It will automatically detect that you added a new file and display the green changes on the screen.
 
-In the bottom-left corner, type a summary title like: Add EDR tampering rule.
+- In the bottom-left corner, type a summary title like: Add EDR tampering rule.
 
-Click the blue Commit to main button.
+- Click the blue Commit to main button.
 
-Click Push origin at the top to upload the file to your live GitHub repository.
+- Click Push origin at the top to upload the file to your live GitHub repository.
+
+
+### ⚙️ Step 4: Setting Up GitHub Actions CI/CD
+
+Now that your Sigma rules live inside your private detection-engineering-lab repository, it’s time to introduce automation. Because your Splunk instance runs inside an internal Host‑Only virtual network, GitHub’s cloud runners cannot directly communicate with your VM. Instead, your pipeline will use sigma‑cli to validate rule syntax and compile your Sigma YAML into Splunk‑ready SPL artifacts.
+
+This gives you a fully automated detection‑as‑code workflow without requiring external network access.
+Inside your existing detection-engineering-lab/ repository, create the GitHub Actions workflow directory.
+Make sure the .github folder begins with a dot: .github/workflows
+
+Paste the following workflow definition: 
+
+<img width="590" height="645" alt="image" src="https://github.com/user-attachments/assets/51434122-3214-4cf5-ae1b-9aa483a629dd" />
+
+
+Then open GitHub Desktop (or your preferred Git client). You should see:
+  - Your new workflow file
+  - Any new Sigma rules you added
+
+Then commit and push your changes:
+ 1. Commit to main
+ 2. Push origin
+
+Then go to your GitHub repository in the browser, Click the Actions tab and watch your pipeline run automatically
+
+### Part 3 🔧Building the Tines Webhook Endpoint
+
