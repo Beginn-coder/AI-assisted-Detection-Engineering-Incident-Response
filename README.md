@@ -199,5 +199,29 @@ Then commit and push your changes:
 
 Then go to your GitHub repository in the browser, Click the Actions tab and watch your pipeline run automatically
 
+### Step 5: 📥 Retrieve Your Compiled Splunk Queries
+
+Once the github pipeline has compiled your human-readable YAML rules into machine-readable Splunk Search Processing Language (SPL) and saved them as a zip file asset, do the following:
+
+  - Go to your repository on the GitHub website and click on the Actions tab.
+  - Click on the most recent, successful workflow run at the top of the list and scroll down to the very bottom of the summary page to find the Artifacts section.
+  - Click on compiled-splunk-alerts to download the zip file, then unzip it and open splunk_queries.txt. Inside, you will find your pre-formatted SPL queries mapping straight to your logs. For example, your account discovery rule will look something like this: index="mydfir-project" Image="*\\whoami.exe"
+
+
 ### Part 3 🔧Building the Tines Webhook Endpoint
 
+### Step 1: ⚡Build the Real-Time Alerts inside Splunk
+
+Now, you need to tell your Splunk instance to run these queries continuously in the background.
+
+1. Log into your Splunk Web UI and go to the Search & Reporting app.
+2. Take your first compiled query from the text file, paste it into the main search box, and click the search button to confirm it runs cleanly.
+3. In the top right corner of the search panel, click Save As and select Alert.
+4. Configure the alert engine with these critical parameters:
+   - Title: SOC Alert - Local Account Discovery
+   - Alert Type: Real-time (or Scheduled to run every 5 minutes if you want to conserve memory resources).
+   - Trigger Conditions: Trigger when Number of Results is greater than 0.
+  
+### 🧲 Step 2: Grab Your Free Tines Webhook
+
+Head over to Tines.com on your host machine and sign up for a free account. Once you're in the dashboard, click Create Story and choose a blank canvas and name it something like Detection Engineering Triage. Now look at the left-hand tool panel, Find the Webhook action icon, drag it, and drop it right into the middle of your canvas. 
