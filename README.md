@@ -225,3 +225,50 @@ Now, you need to tell your Splunk instance to run these queries continuously in 
 ### 🧲 Step 2: Grab Your Free Tines Webhook
 
 Head over to Tines.com on your host machine and sign up for a free account. Once you're in the dashboard, click Create Story and choose a blank canvas and name it something like Detection Engineering Triage. Now look at the left-hand tool panel, Find the Webhook action icon, drag it, and drop it right into the middle of your canvas. 
+
+The next thing you'll need to do is move your Tines story to your personal team to avoid the following error: AI actions cannot run in a personal team
+
+To do this:
+
+  1. Look at the very top-left corner of your Tines screen. You will see your current team name (it likely says something like Your Name's Personal Team).
+  2. Click on that team name dropdown to see your available spaces.
+  3. Select a standard team from the list
+  4. If your story isn't visible there, pivot back to your Personal Team, open your Story, click the three dots (...) next to the Story name at the top, and select Move to Team.
+  5. Choose your standard/shared team space as the destination.
+
+In Splunk, go to Settings > Searches, reports, and alerts. Find your SOC Alert - Local Account Discovery via Whoami alert and click Edit > Edit Alert. Scroll down to your Webhook trigger action and paste your live Tines Webhook URL directly into the box.
+
+Note: make sure you've copied the entire 32-character URL
+
+### 🔨 Part 4: Building the Tines Story 
+
+### Step 1: Drag out a Condition Action
+
+  1. Grab a Condition Action from your left-hand menu and drop it onto the canvas.
+  2. Connect your Webhook Action to this new Condition Action.
+  3. Rename the node to Condition: Is Whoami Alert.
+
+### Step 2: Configure the Matching Rule
+
+  1. Click on the Condition Action to open the panel on the right.
+  2. In the rule configuration, set it up to look for your Splunk alert title:
+       - Field to check: webhook.body.search_name
+       - Operator: contains
+       - Value: Whoami
+
+### Step 3: Add the AI Agent Action
+
+  1. Look at your Tines left-hand menu, find the AI Agent Action, and drag it onto your canvas.
+  2. Draw a connecting arrow from your Condition node directly into this new AI Agent Action.
+  3. Rename the AI action node
+  4. Click on your new AI Triage node and in the right-hand panel, locate the Prompt text area and Paste the following analysis playbook directly into the prompt box:
+
+     <img width="786" height="173" alt="image" src="https://github.com/user-attachments/assets/06aa5630-82a8-43ed-aded-1ce0ffa56347" />
+
+You'll also need to set the temperature to 0.1 
+
+### Step 4: Linking Jira
+
+ 1. Generate the Atlassian API Token in Jira Portal:
+      - Log in to your Atlassian account management page at id.atlassian.com/manage-profile/security/api-tokens.
+      - Click the Create API token button, give it a clear label like Tines-SOC-Automation, and hit Create.
