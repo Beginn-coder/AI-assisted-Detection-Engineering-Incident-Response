@@ -256,6 +256,8 @@ Note: make sure you've copied the entire 32-character URL
        - Operator: contains
        - Value: Whoami
 
+Repeat these steps for each of your Sigma rules by simply coping the initial node
+
 ### Step 3: Add the AI Agent Action
 
   1. Look at your Tines left-hand menu, find the AI Agent Action, and drag it onto your canvas.
@@ -267,8 +269,117 @@ Note: make sure you've copied the entire 32-character URL
 
 You'll also need to set the temperature to 0.1 
 
+If done correctly, your test should have the following result
+
+
+<img width="731" height="211" alt="image" src="https://github.com/user-attachments/assets/a152a8d7-4b3e-4388-9e8c-4e534c0fc459" />
+
+
 ### Step 4: Linking Jira
+
+For this part, you'll want to head over to Jira and set up an account. Once done, you'll want to select the Kanban project template.  
 
  1. Generate the Atlassian API Token in Jira Portal:
       - Log in to your Atlassian account management page at id.atlassian.com/manage-profile/security/api-tokens.
       - Click the Create API token button, give it a clear label like Tines-SOC-Automation, and hit Create.
+
+ 2. Copy the generated token string to your clipboard right away. Atlassian will only show this string to you once. If you close the window before copying it, the token is obscured forever and you will have to delete it and start over.
+ 3. Open Tines and ensure you are working inside your standard team space, Click your team name or settings drop-down menu in the top-left corner and select Credentials, then click New Credential.
+
+In Tines, if you went with the Kanban project template, you'll want to select Jira Software-Create an issue with Jira software 
+
+Your Jira domain, Project Key, and Username fields should look like this:
+
+<img width="796" height="240" alt="image" src="https://github.com/user-attachments/assets/27d75b81-50b0-48ce-b3bb-6012dd94f066" />
+
+Now because we're doing 3 separate AI nodes into jira, you'll need to create 3 separate jira nodes. Towards the bottom of your jira node, you should a field called Summary. Enter the following into the summary field
+
+
+<img width="533" height="75" alt="image" src="https://github.com/user-attachments/assets/c47e8430-6daa-491a-8281-5dc12055d7c1" />
+
+and repeat for the other 3 nodes, changing the summary based on the Sigma rule condition
+
+Your description field will have the following:
+
+h2. 🤖 AI Analyst Triage Report
+*Verdict:* <<ai_agent.output.threat_verdict>>
+*Risk Assessment:* <<ai_agent.output.risk_assessment>>
+*Remediation Step:* <<ai_agent.output.remediation_step>>
+
+---
+
+h2. 🔍 Raw Telemetry Details
+* *Timestamp:* <<webhook.body.result._time>>
+* *Affected System:* {code}<<webhook.body.result.host>>{code}
+* *User Account:* <<webhook.body.result.User>>
+* *Process Image:* {code}<<webhook.body.result.Image>>{code}
+
+h3. 💻 Executed Command Line
+{code:bash}
+<<webhook.body.result.CommandLine>>
+{code}
+
+If it successful, you should see something like this
+
+
+<img width="975" height="86" alt="image" src="https://github.com/user-attachments/assets/a638c689-213d-4eff-992b-b59abdfcd24d" />
+
+in your jira dashboard with the description looking like this
+
+
+<img width="975" height="608" alt="image" src="https://github.com/user-attachments/assets/bc177d79-58df-40d3-abf9-0bc1effe834c" />
+
+
+### Step 5: Building out the Incident Response 
+
+This part is where we take our simple jira ticketing system and transform it into a Incident Response platform
+
+  1. Create the Webhook Listener in Tines
+       - On your Tines storyboard, drag a new Webhook Action onto the canvas and name it Jira Incident Response Listener
+       - Click on the action to open the right sidebar and copy its unique Webhook URL
+
+  2. Configure Jira to Send the Webhook
+       - In Jira, go to Project Settings (or System Settings) $\rightarrow$ Webhooks.
+       - Click Create a Webhook and set the URL to the Tines Webhook URL you copied earlier
+       - Under Events, choose Issue related events for when Jira should notify Tines 
+
+Note: Right above the event checkboxes in Jira, you'll see a field called JQL (Jira Query Language). If you leave it blank, Jira will ping Tines every single time any ticket in your Jira instance is modified. To prevent spamming your Tines workflow, put this JQL filter            in that box: project = "KAN" AND labels = "auto-isolate"
+
+  3. Build the Containment Filter in Tines
+       - Add a Trigger Action to filter out unrelated Jira events and connect it to your Jira Incident Response Listener node
+           - Name: Is Containment Requested?
+
+           - <img width="444" height="194" alt="image" src="https://github.com/user-attachments/assets/0bc8feb1-8ed9-437c-81a7-47b5b4b3be53" />
+
+           You'll also need to add the auto-isolate label in Jira 
+
+  4. Execute the Containment Action
+       - use an HTTP Request Action in Tines that simulates the EDR API request body
+       - In the Payload section, input the following:
+           {
+  "action": "network_isolation",
+  "target_ticket": "=webhook.body.issue.key",
+  "initiated_by": "=webhook.body.user.displayName",
+  "status": "isolation_requested",
+  "timestamp": "=NOW()"
+}
+
+  5. Post the Confirmation Back to Jira
+       - add a Jira Software-Add issue comment with Jira markdown
+
+       - <img width="385" height="242" alt="image" src="https://github.com/user-attachments/assets/5aa44033-1a9e-4d72-89c6-2212c16d37dd" />
+
+       - For the comment section, add the following formula:
+
+         <img width="478" height="292" alt="image" src="https://github.com/user-attachments/assets/af70c334-2a8a-4849-a29a-e38fc8639ff0" />
+
+
+If done correctly, you should have the see the following:
+
+
+<img width="975" height="436" alt="image" src="https://github.com/user-attachments/assets/07bf7e83-d7b1-49a6-8dc4-36b689578f1b" />
+
+and your Tines story should look like this:
+
+
+<img width="975" height="792" alt="image" src="https://github.com/user-attachments/assets/c9c308a9-765e-4e2f-ae66-856d02898cb1" />
